@@ -1,0 +1,96 @@
+# ============================================================================
+# AlwaysOnAgent .gitignore
+# ============================================================================
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.*
+!.env.example
+
+# Authentication, Tokens & Session State
+tiktok_session*.json
+*.session.json
+*.pem
+*.key
+
+# SQLite State & Database Journals
+*.db
+*.db-wal
+*.db-shm
+*.db*
+*.migrated
+data/*.db*
+data/models/
+data/tool_routing.jsonl
+
+# Application & Supervisor Logs
+logs/*
+!logs/.gitkeep
+*.log
+worker.log
+
+# Media Pipeline Outputs & Temporary Cache
+output_videos/*
+!output_videos/.gitkeep
+output_images/*
+!output_images/.gitkeep
+temp_recordings/*
+!temp_recordings/.gitkeep
+temp_frames/*
+!temp_frames/.gitkeep
+
+# Downloaded CC0 3D scene assets (fetched on demand by media_pipeline/scene_assets.py)
+site_assets/models/*/
+site_assets/textures/
+site_assets/hdri/
+
+# Execution Sandboxes & Test Caches
+.sandbox/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+*.lock
+
+# OS & Editor Metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+
+# Empty git/gh config that hides the owner's login from task tools (core/config.py git_lockdown_env)
+data/lockdown/
+
+# Binary APKs
+*.apk
+
+# Firebase service account key and the phones registered for push (core/push.py)
+data/secrets/
+data/push_devices.json
+
+# The startup specs box, saved each start for the MatrixRain login intro (holds the LAN and Tailscale addresses)
+data/startup_specs.txt
+
+# Self-update outcomes and logs (scripts/apply_update.py)
+data/updates/
+
+# Old quote log from before TiktokVideos (nothing writes it now); kept on disk, not in git
+data/affirmations_log.json
+
+# Files shared in the chat (screenshots, documents): personal, never in git
+data/attachments/
+# Task thumbnails (core/task_thumbs.py)
+data/task_thumbs/
+
+# Memory eval cases and results: built from the owner's real conversations, never in git (scripts/eval_memory.py)
+data/evals/
+
+# The local model's shadow-mode answers for memory chores (core/memory, MEMORY_LOCAL_MODE): runtime output
+data/shadow/
+# Files being shared from the Repos screen (GET /api/github/download); each is removed once sent
+data/tmp/
+.testmondata*
+
+# Today cards kept preview images (core/today.py)
+data/today_images/

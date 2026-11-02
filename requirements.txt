@@ -1,0 +1,38 @@
+# ============================================================================
+# AlwaysOnAgent - Python Dependencies
+# ============================================================================
+
+# Mission Control Web HUD & REST API
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.5.0
+
+# System Monitoring, Subprocess Sandboxing & Process Trees
+psutil>=5.9.6
+
+# Chat Assistant Long-Term Memory
+numpy>=1.26                 # required: vector math for memory search
+onnxruntime>=1.17           # local embedding model (semantic memory search); keyword-only search without it
+tokenizers>=0.15            # tokenizer for the local embedding model
+huggingface_hub>=0.20       # one-time download of the embedding model into data/models/
+tiktoken>=0.5               # exact token counts for prompt budgets (estimated without it)
+
+# Autonomous 3D Video Rendering & Neural Voice
+edge-tts>=6.1.9
+playwright>=1.40.0
+python-dotenv>=1.0          # voice settings for renders & TikTok login
+
+# Documents attached in the chat (core/documents.py); OCR also needs Tesseract installed on the PC
+pymupdf>=1.24               # PDF text, and rendering scanned pages for OCR
+python-docx>=1.1            # Word .docx
+Pillow>=10                  # image clean-up before OCR
+
+# HTTP & API Utilities (httpx also backs FastAPI's test client)
+requests>=2.31.0
+httpx>=0.25.0
+
+# Google: Gemini / Imagen (google-genai) and Firebase push sign-in (google-auth)
+google-genai>=1.0
+google-auth>=2.20
+tzdata>=2024.1
+

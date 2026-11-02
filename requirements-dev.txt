@@ -1,0 +1,9 @@
+# ============================================================================
+# AlwaysOnAgent - Test Tooling (the agent itself doesn't need these)
+# ============================================================================
+
+-r requirements.txt
+
+pytest>=9.1
+pytest-xdist>=3.8           # -n auto: the full suite in parallel (scripts/deploy_mini.py needs it)
+pytest-testmon>=2.2         # --testmon: only the tests that run the code you changed
