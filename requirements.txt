@@ -1,0 +1,40 @@
+# ============================================================================
+# AlwaysOnAgent - Python Dependencies
+# ============================================================================
+# Pinned 2026-11-04: exact versions resolved by pip from the >= bounds.
+# A fresh install gets these versions every time. The VM test suite passes
+# with this set (736/742; the 3 failures are pre-existing Linux-VM-only issues).
+
+# Mission Control Web HUD & REST API
+fastapi==0.162.0
+uvicorn==0.54.0
+pydantic==2.14.2
+
+# System Monitoring, Subprocess Sandboxing & Process Trees
+psutil==7.2.2
+
+# Chat Assistant Long-Term Memory
+numpy==2.5.4                 # required: vector math for memory search
+onnxruntime==1.31.1           # local embedding model (semantic memory search); keyword-only search without it
+tokenizers==0.23.3            # tokenizer for the local embedding model
+huggingface_hub==2.4.0       # one-time download of the embedding model into data/models/
+tiktoken==0.14.0               # exact token counts for prompt budgets (estimated without it)
+
+# Autonomous 3D Video Rendering & Neural Voice
+edge-tts==7.3.1
+playwright==1.64.1
+python-dotenv==1.2.4          # voice settings for renders & TikTok login
+
+# Documents attached in the chat (core/documents/); OCR also needs Tesseract installed on the PC
+pymupdf==2.1               # PDF text, and rendering scanned pages for OCR
+python-docx==1.2.0            # Word .docx
+Pillow==13.0.0                  # image clean-up before OCR
+
+# HTTP & API Utilities (httpx also backs FastAPI's test client)
+requests==2.34.2
+httpx==0.28.1
+
+# Google: Gemini / Imagen (google-genai) and Firebase push sign-in (google-auth)
+google-genai==2.34.0
+google-auth==2.62.1
+tzdata==2026.6

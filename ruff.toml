@@ -1,0 +1,29 @@
+# Ruff lint settings. Run: python -m ruff check .
+line-length = 120          # the codebase's wrap width
+target-version = "py313"   # the Mini, the laptop and CI all run 3.13
+
+[lint]
+ignore = [
+    # `except Exception` is deliberate here: background threads, the daemon heartbeat and "never raises" helpers
+    # must survive any error from a tool, a model or a page and log it (docs/AI_HANDOFF.md). Narrowing them would
+    # turn a logged warning into a dead thread.
+    "BLE001",  # blind-except
+    "S110",    # try-except-pass (the same, where there is nothing worth logging)
+]
+
+[lint.flake8-bugbear]
+# FastAPI's way to declare a request body and its default: evaluated per request, never mutated
+extend-immutable-calls = ["fastapi.Body", "interfaces.hud.computer_api.TakeoverStart"]
+
+[lint.per-file-ignores]
+# A package's __init__.py re-exports the names of the module it was split from (2026-11-03/04), so
+# `from core.memory import X` keeps working: those imports are the point, not unused.
+"__init__.py" = ["F401"]
+# The same re-export layer one level down: the package's __init__.py imports these names from here.
+"core/memory/manager.py" = ["F401"]
+"core/database/manager.py" = ["F401"]
+"core/database/common.py" = ["F401"]
+# Test doubles stand in for HTTP responses and clients with plain class attributes (headers = {}).
+"tests/*" = ["RUF012"]
+# Imports the `world` fixture from test_today.py; pytest passes it in as the test's argument of the same name.
+"tests/test_today_feeds_fixes.py" = ["F811"]

@@ -1,0 +1,69 @@
+# AlwaysOnAgent CI — runs the existing test suite on every push / PR to main.
+# No secrets, no deploys, no test changes: the suite is run exactly as-is.
+# The suite is hermetic by design (tests/conftest.py): temp SQLite database,
+# in-process bge-small embeddings, no Ollama, no real model keys, companion
+# tools pointed at folders where they are not installed.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements-dev.txt
+            requirements.txt
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Install mypy and ruff
+        run: python -m pip install mypy==2.4.1 ruff==0.17.4
+
+      # Two tests need external tools the runner does not ship:
+      # test_documents.py OCRs images (Tesseract) and extracts video frames (ffmpeg).
+      # Both are installed on the dev laptop, so install them here too rather
+      # than weakening the tests to skip when the tools are missing.
+      - name: Install Tesseract and ffmpeg
+        run: choco install tesseract ffmpeg -y
+
+      # The local embedding model is downloaded at runtime by huggingface_hub
+      # into data/models/ (see requirements.txt). data/ is gitignored, so the
+      # directory does not exist in the repo — it is created on first use.
+      # Cache it so CI does not re-download the model on every run.
+      - name: Cache embedding model
+        uses: actions/cache@v6
+        with:
+          path: data/models
+          key: ${{ runner.os }}-models-${{ hashFiles('requirements.txt') }}
+
+      - name: Run tests
+        run: python -m pytest -q -n auto
+
+      # Type-check the whole codebase with the repo's mypy.ini (non-strict).
+      # mypy exits non-zero on any error, so this gates the run on zero errors.
+      - name: Run mypy
+        run: python -m mypy core interfaces scripts supervisor.py
+
+      # Lint with the repo's ruff.toml (ruff's default rules, with the deliberate exceptions listed there).
+      - name: Run ruff
+        run: python -m ruff check .
+
+      # Enforce the code-size rule (AI_HANDOFF.md rule 11): no function over
+      # 50 lines, no file over 500 lines, source only. The script exits
+      # non-zero with the violations listed, so this gates the run too.
+      - name: Check code size
+        run: python scripts/check_code_size.py
